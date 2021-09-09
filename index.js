@@ -1,10 +1,3 @@
-import { reactive, effectWatch } from './core/reactivity/index.js'
-const a = reactive({
-  b: 11
-})
-let c
-effectWatch(() => {
-  c = a.b + 1
-  console.log(c)
-})
-a.b = 20
+import App from './App.js'
+import { createApp } from './core/index.js'
+createApp(App).mount(document.querySelector('#app'))
