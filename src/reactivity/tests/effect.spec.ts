@@ -4,11 +4,14 @@ import { effect, stop } from '../effect'
 describe('effect', () => {
   it('happy path', () => {
     const user = reactive({
-      age: 10
+      age: 10,
+      name: '张三'
     })
     let nextAge
+    let a
     effect(() => {
       nextAge = user.age + 1
+      a = user.name + 1
     })
     expect(nextAge).toBe(11)
     // update

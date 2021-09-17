@@ -16,6 +16,7 @@ class ReactiveEffect {
     return this._fn()
   }
   stop() {
+    // 防止多次stop，一个示例调用一次stop就已经移除掉这个dep
     if (this.active) {
       cleanupEffect(this)
       if (this.onStop) {
@@ -61,8 +62,8 @@ export function track(target, key) {
   if (!activeEffect) return
 
   dep.add(activeEffect)
-  // 反向收集dep
 
+  // 反向收集dep
   activeEffect.deps.push(dep)
 }
 export function trigger(target, key) {
@@ -82,9 +83,9 @@ export function effect(fn, options: any = {}) {
   // _effect.onStop = options.onStop
   extend(_effect, options)
   _effect.run()
-  // 这个runner就是stop的runner
+  // 这个runner就是stop的runner bind为了防止runner调用this指向不正确
   const runner: any = _effect.run.bind(_effect)
-  // 挂载
+  // 挂载effect在runner上
   runner.effect = _effect
   return runner
 }
