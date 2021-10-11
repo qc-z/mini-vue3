@@ -12,11 +12,12 @@ class ReactiveEffect {
     this.scheduler = scheduler
   }
   run() {
+    // 只有run之后才有activeEffect，dep才能收集进去
     activeEffect = this
     return this._fn()
   }
   stop() {
-    // 防止多次stop，一个示例调用一次stop就已经移除掉这个dep
+    // 防止多次stop，一个实例调用一次stop就应该移除掉这个dep
     if (this.active) {
       cleanupEffect(this)
       if (this.onStop) {
@@ -69,6 +70,10 @@ export function track(target, key) {
 export function trigger(target, key) {
   let depsMap = targetMap.get(target)
   let dep = depsMap.get(key)
+  // MARK: 依赖没有effect，但是触发了set操作，这里会报错
+  dep && triggerEffects(dep)
+}
+function triggerEffects(dep) {
   for (const effect of dep) {
     if (effect.scheduler) {
       effect.scheduler()

@@ -8,14 +8,13 @@ describe('effect', () => {
       name: '张三'
     })
     let nextAge
-    let a
     effect(() => {
       nextAge = user.age + 1
-      a = user.name + 1
     })
     expect(nextAge).toBe(11)
     // update
     user.age++
+    user.name = '李四'
     expect(nextAge).toBe(12)
   })
   it('should bu return runner', () => {
