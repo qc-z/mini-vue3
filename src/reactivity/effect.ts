@@ -39,6 +39,11 @@ class ReactiveEffect {
     }
   }
 }
+/**
+ * @description: 调用stop之后，清除deps收集的effext
+ * @param {*} effect
+ * @return {*}
+ */
 function cleanupEffect(effect) {
   effect.deps.forEach((dep: any) => {
     // effect 是set
@@ -51,11 +56,11 @@ function cleanupEffect(effect) {
 export function effect(fn, options: any = {}) {
   const _effect = new ReactiveEffect(fn, options.scheduler)
   extend(_effect, options)
-
+  // effect收集进来先跑一编
   _effect.run()
   // 这个runner就是stop的runner bind为了防止runner调用this指向不正确
   const runner: any = _effect.run.bind(_effect)
-  // 挂载effect在runner上
+  // 挂载effect在runner上，stop里面要调用_effect的stop方法
   runner.effect = _effect
   return runner
 }
