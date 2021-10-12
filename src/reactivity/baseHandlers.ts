@@ -1,5 +1,6 @@
+import { isObject } from '../shared'
 import { track, trigger } from './effect'
-import { ReactiveFlags } from './reactive'
+import { reactive, readonly, ReactiveFlags } from './reactive'
 const get = createGetter()
 const set = createSetter()
 const readonlyGet = createGetter(true)
@@ -14,6 +15,10 @@ function createGetter(isReadonly = false) {
       return isReadonly
     }
     const res = Reflect.get(target, key)
+    // 看看res是不是object
+    if (isObject(res)) {
+      return isReadonly ? readonly(res) : reactive(res)
+    }
     if (!isReadonly) {
       // TODO 收集依赖
       track(target, key)
@@ -38,7 +43,7 @@ export const readonlyHanders = {
   get: readonlyGet,
   set(target, key, value) {
     // 不可以set
-    console.warn(`key:${key} set 失败 因为target是readonly`)
+
     return true
   }
 }
