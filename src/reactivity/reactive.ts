@@ -44,6 +44,15 @@ export function isReadonly(value) {
   return !!value[ReactiveFlags.IS_READONLY]
 }
 /**
+ * @description: 判断是reactive和readonly
+ * @param {*} value
+ * @return {*}
+ */
+export function isProxy(value) {
+  return isReactive(value) || isReadonly(value)
+}
+
+/**
  * @description: createActiveObject
  * @param {*} target
  * @param {*} baseHandlers
