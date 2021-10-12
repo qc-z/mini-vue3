@@ -6,8 +6,10 @@ const readonlyGet = createGetter(true)
 
 function createGetter(isReadonly = false) {
   return function get(target, key) {
+    // 如果key是IS_REACTIVE直接返回
     if (key === ReactiveFlags.IS_REACTIVE) {
       return !isReadonly
+      // 如果key是IS_READONLY直接返回
     } else if (key === ReactiveFlags.IS_READONLY) {
       return isReadonly
     }

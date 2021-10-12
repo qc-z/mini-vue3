@@ -1,4 +1,7 @@
 import { extend } from '../shared'
+let activeEffect
+let shouldTrack
+const targetMap = new Map()
 
 class ReactiveEffect {
   private _fn: any
@@ -12,9 +15,18 @@ class ReactiveEffect {
     this.scheduler = scheduler
   }
   run() {
+    // 调用stop后，active为false，不收集依赖，只需要调用一下fn即可
+    if (!this.active) {
+      return this._fn()
+    }
     // 只有run之后才有activeEffect，dep才能收集进去
     activeEffect = this
-    return this._fn()
+    // 把开关打开，之后调用fn，触发get方法，进行依赖收集
+    shouldTrack = true
+    const result = this._fn()
+    // 把shouldTrack变为false，重置一下状态，只有active为true才打开shouldTrack，进行依赖收集
+    shouldTrack = false
+    return result
   }
   stop() {
     // 防止多次stop，一个实例调用一次stop就应该移除掉这个dep
@@ -32,17 +44,24 @@ function cleanupEffect(effect) {
     // effect 是set
     dep.delete(effect)
   })
+  // MARK: 清空
+  effect.deps.length = 0
 }
-/**
- * @description: 收集依赖
- * @param {*} trage
- * @param {*} key
- * @return {*}
- */
-const targetMap = new Map()
-let activeEffect
+
+export function effect(fn, options: any = {}) {
+  const _effect = new ReactiveEffect(fn, options.scheduler)
+  extend(_effect, options)
+
+  _effect.run()
+  // 这个runner就是stop的runner bind为了防止runner调用this指向不正确
+  const runner: any = _effect.run.bind(_effect)
+  // 挂载effect在runner上
+  runner.effect = _effect
+  return runner
+}
 
 export function track(target, key) {
+  if (!isTracking()) return
   // 一个taget对应一个key new Map()
   // 一个key对应一个dep new Map()
   // dep里面依赖是不能重复的 new Set()
@@ -59,20 +78,24 @@ export function track(target, key) {
     dep = new Set()
     depsMap.set(key, dep)
   }
-  // TODO??
-  if (!activeEffect) return
-
+  // 优化
+  if (dep.has(activeEffect)) return
   dep.add(activeEffect)
 
   // 反向收集dep
   activeEffect.deps.push(dep)
 }
+function isTracking() {
+  return shouldTrack && activeEffect
+}
+
 export function trigger(target, key) {
   let depsMap = targetMap.get(target)
   let dep = depsMap.get(key)
-  // MARK: 依赖没有effect，但是触发了set操作，这里会报错
+  // MARK: 依赖没有effect，但是触发了set操作，这里会报错(边缘case)
   dep && triggerEffects(dep)
 }
+
 function triggerEffects(dep) {
   for (const effect of dep) {
     if (effect.scheduler) {
@@ -81,18 +104,6 @@ function triggerEffects(dep) {
       effect.run()
     }
   }
-}
-
-export function effect(fn, options: any = {}) {
-  const _effect = new ReactiveEffect(fn, options.scheduler)
-  // _effect.onStop = options.onStop
-  extend(_effect, options)
-  _effect.run()
-  // 这个runner就是stop的runner bind为了防止runner调用this指向不正确
-  const runner: any = _effect.run.bind(_effect)
-  // 挂载effect在runner上
-  runner.effect = _effect
-  return runner
 }
 
 export function stop(runner) {
