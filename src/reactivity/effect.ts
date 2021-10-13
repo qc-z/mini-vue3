@@ -83,6 +83,9 @@ export function track(target, key) {
     dep = new Set()
     depsMap.set(key, dep)
   }
+  trackEffect(dep)
+}
+export function trackEffect(dep) {
   // 优化
   if (dep.has(activeEffect)) return
   dep.add(activeEffect)
@@ -90,7 +93,8 @@ export function track(target, key) {
   // 反向收集dep
   activeEffect.deps.push(dep)
 }
-function isTracking() {
+
+export function isTracking() {
   return shouldTrack && activeEffect
 }
 
@@ -101,7 +105,7 @@ export function trigger(target, key) {
   dep && triggerEffects(dep)
 }
 
-function triggerEffects(dep) {
+export function triggerEffects(dep) {
   for (const effect of dep) {
     if (effect.scheduler) {
       effect.scheduler()
