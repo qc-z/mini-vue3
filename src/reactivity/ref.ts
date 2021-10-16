@@ -42,8 +42,26 @@ export function ref(value) {
 }
 
 export function isRef(ref) {
-  return !!ref.__v_isRef
+  // MARK:ref有可能为空
+  return !!ref && !!ref.__v_isRef
 }
 export function unRef(ref) {
   return isRef(ref) ? ref.value : ref
+}
+export function proxyRefs(objectWidthRefs) {
+  return new Proxy(objectWidthRefs, {
+    get(target, key) {
+      // 1用proxyRefs转换的值访问里面的ref自动解包不用带上.value
+      // 2如果里面的值不是ref返回本身
+      return unRef(Reflect.get(target, key))
+    },
+    set(target, key, value) {
+      if (isRef(target[key]) && !isRef(value)) {
+        return (target[key].value = value)
+      } else {
+        return Reflect.set(target, key, value)
+      }
+      // 当旧值为ref，新的值不是ref才替换
+    }
+  })
 }
