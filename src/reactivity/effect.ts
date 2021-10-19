@@ -3,7 +3,7 @@ let activeEffect
 let shouldTrack
 const targetMap = new Map()
 
-class ReactiveEffect {
+export class ReactiveEffect {
   private _fn: any
   deps = []
   active = true
@@ -55,6 +55,7 @@ function cleanupEffect(effect) {
 
 export function effect(fn, options: any = {}) {
   const _effect = new ReactiveEffect(fn, options.scheduler)
+  // 后面不确定的options自动合并在ReactiveEffect类上
   extend(_effect, options)
   // effect收集进来先跑一编
   _effect.run()
