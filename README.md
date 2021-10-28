@@ -1,11 +1,14 @@
 ## mini-vue 笔记
 
-1. [项目搭建](https://github.com/qc-z/study-note/blob/master/vue3source/mini-vue工程搭建.md)
+1. [笔记汇总](https://github.com/qc-z/study-note)
 
-2. [vue3 运行 流程](https://github.com/qc-z/study-note/blob/master/vue3source/vue3流程.md)
+2. vue3 运行 流程
 
 ![vue3运行流程图](https://raw.githubusercontent.com/qc-z/study-note/master/vue3source/assets/yuque_diagram.jpg)
 
-3. [依赖收集](https://github.com/qc-z/study-note/blob/master/vue3source/依赖收集.md)
+3. 依赖收集关系
 
 ![依赖收集](https://raw.githubusercontent.com/qc-z/study-note/master/vue3source/assets/targetMap.png)
+
+依赖收集运行
+![依赖收集运行](https://raw.githubusercontent.com/qc-z/study-note/master/vue3source/assets/targetMapRun.jpg)
