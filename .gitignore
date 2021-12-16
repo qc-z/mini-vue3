@@ -4,6 +4,7 @@
 
 node_modules
 /dist
+/lib
  
 # local env files
 .env.local
