@@ -4,14 +4,14 @@ export default {
   input: 'src/index.ts',
   output: [
     // 1 cjs ->commomjs
-    // 2 esm -> es6
     {
       format: 'cjs',
-      file: pkg.main,
+      file: pkg.main
     },
+    // 2 esm -> es6
     {
       format: 'esm',
-      file: pkg.module,
+      file: pkg.module
     }
   ],
   plugins: [typescript()]
