@@ -1,5 +1,6 @@
 import { isObject } from '../shared'
 import { createComponentInstance, setupComponent } from './component'
+import { createdVnode } from './vnode'
 
 export function render(vnode, container) {
   // 调用path，进行递归处理
@@ -15,28 +16,35 @@ function patch(vnode, container) {
   }
 }
 
-function mountComponent(vnode: any, container: any) {
-  // 创建一个组件实例
-  const instance = createComponentInstance(vnode)
-  setupComponent(instance)
-  setupRenderEffect(instance, container)
-}
-
-function setupRenderEffect(instance: any, container: any) {
-  // 就是return 出来的h函数
-  const subTree = instance.render()
-  patch(subTree, container)
-}
-
-// 处理组件
 function processComponent(vnode: any, container: any) {
   mountComponent(vnode, container)
 }
-// 处理element
-function processElement(vnode: any, container: any) {
-  // 创建元素
-  const el = document.createElement(vnode.type)
+// 处理组件
+function mountComponent(initialVnode: any, container: any) {
+  // 创建一个组件实例
+  const instance = createComponentInstance(initialVnode)
+  setupComponent(instance)
+  setupRenderEffect(instance, initialVnode, container)
+}
 
+function setupRenderEffect(instance: any, initialVnode, container: any) {
+  const { proxy } = instance
+
+  // 就是return 出来的h函数
+  const subTree = instance.render.call(proxy)
+  patch(subTree, container)
+  // 要等到组件初始化完成之后才能获取到组件的el
+  initialVnode.$el = subTree.el
+}
+
+function processElement(vnode: any, container: any) {
+  mountElement(vnode, container)
+}
+
+// 处理element
+function mountElement(vnode: any, container: any) {
+  // 创建元素
+  const el = (vnode.el = document.createElement(vnode.type))
   // 判断children
   const { children } = vnode
   // children是string
