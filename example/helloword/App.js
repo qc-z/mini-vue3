@@ -9,7 +9,16 @@ export const App = {
       'div',
       {
         class: ['red', 'green'],
-        id: 'root'
+        id: 'root',
+        onClick: (val) => {
+          console.log('click', val)
+        },
+        onMousedown: (val) => {
+          console.log('onMousedown', val)
+        },
+        onMouseover: (val) => {
+          console.log('onMouseover', val)
+        }
       },
       this.msg)
   },
