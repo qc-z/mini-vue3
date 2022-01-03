@@ -1,3 +1,4 @@
+import { isObject } from '../shared'
 import { mutableHanders, readonlyHanders, shallowReadonlyhandlers } from './baseHandlers'
 /**
  * @description: reactive类型枚举
@@ -24,7 +25,7 @@ export function reactive(raw) {
 export function readonly(raw) {
   return createActiveObject(raw, readonlyHanders)
 }
-export function shallowReactive(raw) {
+export function shallowReadonly(raw) {
   return createActiveObject(raw, shallowReadonlyhandlers)
 }
 /**
@@ -59,5 +60,8 @@ export function isProxy(value) {
  * @return {*}
  */
 function createActiveObject(target, baseHandlers) {
+  if (isObject(target)) {
+    console.log(`target ${target} 必须是一个对象`)
+  }
   return new Proxy(target, baseHandlers)
 }
