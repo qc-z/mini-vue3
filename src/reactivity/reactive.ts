@@ -60,7 +60,7 @@ export function isProxy(value) {
  * @return {*}
  */
 function createActiveObject(target, baseHandlers) {
-  if (isObject(target)) {
+  if (!isObject(target)) {
     console.log(`target ${target} 必须是一个对象`)
   }
   return new Proxy(target, baseHandlers)
