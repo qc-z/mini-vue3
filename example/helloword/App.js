@@ -6,7 +6,6 @@ export const App = {
   name: 'App',
   // 先实现render函数，因为template有点复杂
   render() {
-    window.self = this
     return h(
       'div',
       {
