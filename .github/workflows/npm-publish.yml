@@ -23,10 +23,11 @@ jobs:
           git checkout $CI_COMMIT_REF_NAME
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm config list
-          npm run build
+          yarn
+          yarn build
           SPACE_CHAR=" "
           npx standard-version --releaseCommitMessageFormat "chore(release):${SPACE_CHAR}{{currentTag}} [skip ci]"
           git push --follow-tags origin $CI_COMMIT_REF_NAME
-          npm publish --access public
+          yarn publish --access public
         env:
             NODE_AUTH_TOKEN: ${{secrets.mini-vue3}}
