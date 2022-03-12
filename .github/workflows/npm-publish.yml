@@ -1,0 +1,32 @@
+# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
+# For more information see: https://help.github.com/actions/language-and-framework-guides/publishing-nodejs-packages
+# https://blog.pawgame.com/2020/09/18/publish-npm-by-github-action/
+name: Node.js Package
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  auto_release_npm_package:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - run: |
+          git config --local user.email "18826255448@163.com"
+          git config --local user.name "qichengzhu"
+          git checkout $CI_COMMIT_REF_NAME
+          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+          npm config list
+          npm run build
+          SPACE_CHAR=" "
+          npx standard-version --releaseCommitMessageFormat "chore(release):${SPACE_CHAR}{{currentTag}} [skip ci]"
+          git push --follow-tags origin $CI_COMMIT_REF_NAME
+          npm publish --access public
+        env:
+            NODE_AUTH_TOKEN: ${{secrets.mini-vue3}}

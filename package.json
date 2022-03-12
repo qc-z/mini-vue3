@@ -1,9 +1,15 @@
 {
-  "name": "mini-vue",
+  "name": "mini-vue3",
   "version": "1.0.0",
+  "description": "实现最简单的vue3模型",
   "main": "lib/mini-vue.cjs.js",
   "module": "lib/mini-vue.esm.js",
+  "author": "jujuc",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/qc-z/mini-vue3/issues"
+  },
+  "homepage": "https://github.com/qc-z/mini-vue3",
   "scripts": {
     "test": "jest --watch",
     "build": "rollup -c rollup.config.js"
@@ -19,5 +25,6 @@
     "rollup": "^2.61.1",
     "tslib": "^2.3.1",
     "typescript": "^4.5.4"
-  }
+  },
+  "dependencies": {}
 }
