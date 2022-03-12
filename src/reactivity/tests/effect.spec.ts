@@ -99,4 +99,21 @@ describe('effect', () => {
     stop(runner)
     expect(onStop).toBeCalledTimes(1)
   })
+
+  it('clean effect', () => {
+    const user = reactive({
+      man: true,
+      age: 10,
+      name: '张三'
+    })
+    let nextAge
+    const fn = jest.fn(() => {
+      nextAge = user.man ? user.age : 100
+    })
+    effect(() => {
+      fn()
+    })
+    user.age = 10
+    expect(fn).toHaveBeenCalledTimes(2)
+  })
 })
