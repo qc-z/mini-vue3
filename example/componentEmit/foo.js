@@ -14,7 +14,7 @@ export const Foo = {
     const btn = h('button', {
       onClick: this.emitAdd
     },
-      'emitAdd'
+      'emitAdd1'
     )
     const foo = h('p', {}, 'foo:')
     return h('div', {}, [foo, btn])

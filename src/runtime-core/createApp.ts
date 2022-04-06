@@ -1,5 +1,5 @@
 import { render } from './renderer'
-import { createdVnode } from './vnode'
+import { createVNode } from './vnode'
 
 export function createApp(rootComponent) {
   return {
@@ -8,7 +8,7 @@ export function createApp(rootComponent) {
     mount(rootContainer) {
       // 先把rootComponent变成一个虚拟节点 vnode (rootComponent->vnode)
       // 后续所有逻辑都会基于这个虚拟节点进行处理
-      const vnode = createdVnode(rootComponent)
+      const vnode = createVNode(rootComponent)
       //接受一个vnode和虚拟节点
       render(vnode, rootContainer)
     }

@@ -1,20 +1,32 @@
-import { ShapeFlags } from '../shared/shapeFlags'
-
-export function createdVnode(type, props?, children?) {
+import { ShapeFlags } from "../shared/ShapeFlags";
+export function createVNode(type, props?, children?) {
   const vnode = {
     type,
     props,
     children,
-    shapeFlag: getFlags(type),
-    el: null
-  }
-  if (typeof children === 'string') {
-    vnode.shapeFlag |= ShapeFlags.TEXT_CHILDREN
+    shapeFlag: getShapeFlag(type),
+    el: null,
+  };
+
+  if (typeof children === "string") {
+    vnode.shapeFlag |= ShapeFlags.TEXT_CHILDREN;
   } else if (Array.isArray(children)) {
-    vnode.shapeFlag |= ShapeFlags.ARRAY_CHILDREN
+    vnode.shapeFlag |= ShapeFlags.ARRAY_CHILDREN;
   }
-  return vnode
+
+
+  if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+    if (typeof children === "object") {
+      vnode.shapeFlag |= ShapeFlags.SLOT_CHILDREN
+    }
+  }
+
+
+  return vnode;
 }
-function getFlags(type) {
-  return typeof type === 'string' ? ShapeFlags.ELEMENT : ShapeFlags.STATEFUL_COMPONENT
+
+function getShapeFlag(type) {
+  return typeof type === "string"
+    ? ShapeFlags.ELEMENT
+    : ShapeFlags.STATEFUL_COMPONENT;
 }

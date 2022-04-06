@@ -1,6 +1,6 @@
 {
   "name": "small-vue3",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "实现最简单的vue3模型",
   "main": "lib/mini-vue.cjs.js",
   "module": "lib/mini-vue.esm.js",
@@ -12,7 +12,7 @@
   "homepage": "https://github.com/qc-z/mini-vue3",
   "scripts": {
     "test": "jest --watch",
-    "build": "rollup -c rollup.config.js"
+    "build": "rollup -c rollup.config.js --watch"
   },
   "devDependencies": {
     "@babel/core": "^7.15.5",

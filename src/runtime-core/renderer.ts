@@ -1,7 +1,6 @@
-import { isObject } from '../shared'
-import { ShapeFlags } from '../shared/shapeFlags'
+import { ShapeFlags } from '../shared/ShapeFlags'
+
 import { createComponentInstance, setupComponent } from './component'
-import { createdVnode } from './vnode'
 
 export function render(vnode, container) {
   // 调用path，进行递归处理
@@ -15,11 +14,13 @@ function patch(vnode, container) {
   } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
     // 2 处理组件
     processComponent(vnode, container)
+
   }
 }
 
 function processComponent(vnode: any, container: any) {
   mountComponent(vnode, container)
+
 }
 // 处理组件
 function mountComponent(initialVnode: any, container: any) {
