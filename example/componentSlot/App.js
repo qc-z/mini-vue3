@@ -12,8 +12,8 @@ export const App = {
     // 3 指定位置
     const foo = h(Foo, {},
       {
-        header: h('p', {}, 'header'),
-        footer: h('p', {}, 'footer')
+        header: ({ age }) => h('p', {}, 'header' + age),
+        footer: ({ name }) => h('p', {}, 'footer' + name)
       }
     )
     return h('div', {}, [app, foo])
