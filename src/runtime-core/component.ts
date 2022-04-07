@@ -5,13 +5,15 @@ import { initProps } from './componentProps'
 import { initSlots } from './componentsSlots'
 
 // 创建一个组件实例
-export function createComponentInstance(vnode) {
+export function createComponentInstance(vnode, parent) {
   const component = {
     vnode,
     type: vnode.type,
     setupState: {},
     props: {},
     slots: {},
+    provides: parent ? parent.provides : {},
+    parent,
     emit: () => { }
   }
   component.emit = emit.bind(null, component) as any

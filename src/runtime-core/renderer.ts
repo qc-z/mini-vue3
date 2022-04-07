@@ -5,13 +5,13 @@ import { Fragment, Text } from './vnode'
 
 export function render(vnode, container) {
   // 调用path，进行递归处理
-  patch(vnode, container)
+  patch(vnode, container, null)
 }
-function patch(vnode, container) {
+function patch(vnode, container, parentComponent) {
   const { shapeFlag, type } = vnode
   switch (type) {
     case Fragment:
-      processFragment(vnode, container)
+      processFragment(vnode, container, parentComponent)
       break
     case Text:
       processText(vnode, container)
@@ -20,10 +20,10 @@ function patch(vnode, container) {
       // type 是Fragment只渲染children
       if (shapeFlag & ShapeFlags.ELEMENT) {
         // 1 处理element
-        processElement(vnode, container)
+        processElement(vnode, container, parentComponent)
       } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
         // 2 处理组件
-        processComponent(vnode, container)
+        processComponent(vnode, container, parentComponent)
 
       }
   }
@@ -32,19 +32,18 @@ function patch(vnode, container) {
 
 function setupRenderEffect(instance: any, initialVnode, container: any) {
   const { proxy } = instance
-
   // 就是return 出来的h函数
   const subTree = instance.render.call(proxy)
-  patch(subTree, container)
+  patch(subTree, container, instance)
   // 要等到组件初始化完成之后才能获取到组件的el
   initialVnode.$el = subTree.el
 }
 
 // MARK:处理element类型
-function processElement(vnode: any, container: any) {
-  mountElement(vnode, container)
+function processElement(vnode: any, container: any, parentComponent) {
+  mountElement(vnode, container, parentComponent)
 }
-function mountElement(vnode: any, container: any) {
+function mountElement(vnode: any, container: any, parentComponent) {
   // 创建元素
   const el = (vnode.el = document.createElement(vnode.type))
   // 判断children
@@ -54,7 +53,7 @@ function mountElement(vnode: any, container: any) {
     el.textContent = children
     // children是array
   } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
-    mountChildren(vnode, el)
+    mountChildren(vnode, el, parentComponent)
   }
 
   // 生成props
@@ -73,20 +72,19 @@ function mountElement(vnode: any, container: any) {
 }
 
 // MARK:处理组件类型
-function processComponent(vnode: any, container: any) {
-  mountComponent(vnode, container)
-
+function processComponent(vnode: any, container: any, parentComponent) {
+  mountComponent(vnode, container, parentComponent)
 }
-function mountComponent(initialVnode: any, container: any) {
+function mountComponent(initialVnode: any, container: any, parentComponent) {
   // 创建一个组件实例
-  const instance = createComponentInstance(initialVnode)
+  const instance = createComponentInstance(initialVnode, parentComponent)
   setupComponent(instance)
   setupRenderEffect(instance, initialVnode, container)
 }
 
 // MARK:处理Fragment件类型
-function processFragment(vnode: any, container: any) {
-  mountChildren(vnode, container)
+function processFragment(vnode: any, container: any, parentComponent) {
+  mountChildren(vnode, container, parentComponent)
 }
 
 // MARK:处理Text件类型
@@ -97,9 +95,9 @@ function processText(vnode: any, container: any) {
 }
 
 
-function mountChildren(vnode, container) {
+function mountChildren(vnode, container, parentComponent) {
   vnode.children.forEach((v: any) => {
-    patch(v, container)
+    patch(v, container, parentComponent)
   })
 }
 
