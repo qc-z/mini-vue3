@@ -12,10 +12,7 @@
   "homepage": "https://github.com/qc-z/mini-vue3",
   "scripts": {
     "test": "jest --watch",
-    "build": "rollup -c rollup.config.js --watch",
-    "major": "npm version major",
-    "minor": "npm version minor",
-    "path": "npm version patch"
+    "build": "rollup -c rollup.config.js --watch"
   },
   "devDependencies": {
     "@babel/core": "^7.15.5",
