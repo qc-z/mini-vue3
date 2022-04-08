@@ -12,11 +12,17 @@ export function provide(key, value) {
   }
 
 }
-export function inject(key) {
+export function inject(key, defaultValue) {
   const currentInstance: any = getCurrentInstance()
   if (currentInstance) {
-    const parentInstance = currentInstance.parent.provides
-    console.log(parentInstance);
-    return parentInstance[key]
+    const parentProvides = currentInstance.parent.provides
+    if (key in parentProvides) {
+      return parentProvides[key]
+    } else if (defaultValue) {
+      if (typeof defaultValue === 'function') {
+        return defaultValue()
+      }
+      return defaultValue
+    }
   }
 }
