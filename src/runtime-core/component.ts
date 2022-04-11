@@ -2,7 +2,7 @@ import { shallowReadonly } from '../reactivity/reactive'
 import { emit } from './componentEmit'
 import { PublicInstanceProxyHandlers } from './componentPubilcInstance'
 import { initProps } from './componentProps'
-import { initSlots } from './componentsSlots'
+import { initSlots } from './componentSlots'
 import { proxyRefs } from '../reactivity'
 
 // 创建一个组件实例

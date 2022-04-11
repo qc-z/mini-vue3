@@ -9,7 +9,9 @@ export function createRenderer(options) {
   const {
     createElement: hostCreateElement,
     patchProp: hostPatchProp,
-    insert: hostInsert
+    insert: hostInsert,
+    setElementText: hostSetElementText,
+    remove: hostRemove
   } = options
 
   function render(vnode, container) {
@@ -35,8 +37,8 @@ export function createRenderer(options) {
           processComponent(n1, n2, container, parentComponent)
 
         }
+        break
     }
-
   }
 
   function setupRenderEffect(instance: any, initialVNode, container: any) {
@@ -66,19 +68,52 @@ export function createRenderer(options) {
     if (!n1) {
       mountElement(n2, container, parentComponent);
     } else {
-      patchElement(n1, n2, container);
+      patchElement(n1, n2, container, parentComponent);
 
     }
   }
-  function patchElement(n1, n2, container) {
+  function patchElement(n1, n2, container, parentComponent) {
 
     const oldProps = n1.props || EMPTY_OBJ
     const newProps = n2.props || EMPTY_OBJ
     const el = (n2.el = n1.el);
 
     patchPorps(el, oldProps, newProps);
+    patchChildren(n1, n2, el, parentComponent);
+  }
+  function patchChildren(n1, n2, container, parentComponent) {
+    const c1 = n1.children;
+    const preShapeFlag = n1.shapeFlag;
+    const { shapeFlag } = n2;
+    const c2 = n2.children;
+    if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+      if (preShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+        console.log('旧节点是 array,新节点是 text');
+        unmountChildren(n1.children);
+      }
+      // 新老不相等，直接更新（新节点是 text，不管老节点是什么）
+      if (c1 !== c2) {
+        console.log('新节点是 text，不管老节点是什么');
+        hostSetElementText(container, c2);
+      }
+    } else {
+      if (preShapeFlag & ShapeFlags.TEXT_CHILDREN) {
+        console.log('旧节点是 text,新节点是 array');
+        hostSetElementText(container, '')
+        mountChildren(c2, container, parentComponent);
+
+      } else {
+        console.log('旧节点是 array,新节点是 array')
+      }
+    }
   }
 
+  function unmountChildren(children) {
+    for (let i = 0; i < children.length; i++) {
+      const el = children[i].el;
+      hostRemove(el);
+    }
+  }
 
   function patchPorps(el, oldProps: any, newProps: any) {
     if (oldProps !== newProps) {
@@ -112,7 +147,7 @@ export function createRenderer(options) {
       el.textContent = children
       // children是array
     } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
-      mountChildren(vnode, el, parentComponent)
+      mountChildren(vnode.children, el, parentComponent)
     }
 
     // 生成props
@@ -138,7 +173,7 @@ export function createRenderer(options) {
 
   // MARK:处理Fragment件类型
   function processFragment(n1, n2, container: any, parentComponent) {
-    mountChildren(n2, container, parentComponent)
+    mountChildren(n2.children, container, parentComponent)
   }
 
   // MARK:处理Text件类型
@@ -149,12 +184,15 @@ export function createRenderer(options) {
   }
 
 
-  function mountChildren(vnode, container, parentComponent) {
-    vnode.children.forEach((v: any) => {
+  function mountChildren(children, container, parentComponent) {
+    children.forEach((v: any) => {
       patch(null, v, container, parentComponent)
     })
   }
+
   return {
     createApp: createAppAPI(render)
   }
 }
+
+
