@@ -65,7 +65,7 @@ export const mutableHanders = {
  * @param {*}
  * @return {*}
  */
-export const readonlyHanders = {
+export const readonlyHandlers = {
   get: readonlyGet,
   set(target, key, value) {
     // 不可以set
@@ -74,10 +74,10 @@ export const readonlyHanders = {
   }
 }
 /**
- * @description: shallowReadonlyhandlers
+ * @description: shallowReadonlyHandlers
  * @param {*}
  * @return {*}
  */
-export const shallowReadonlyhandlers = extend({}, readonlyHanders, {
+export const shallowReadonlyHandlers = extend({}, readonlyHandlers, {
   get: shallowReadonlyGet
 })

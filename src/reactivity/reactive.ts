@@ -1,67 +1,44 @@
-import { isObject } from '../shared'
-import { mutableHanders, readonlyHanders, shallowReadonlyhandlers } from './baseHandlers'
-/**
- * @description: reactive类型枚举
- * @param {*}
- * @return {*}
- */
+import { isObject } from "../shared/index";
+import {
+  mutableHanders,
+  readonlyHandlers,
+  shallowReadonlyHandlers,
+} from "./baseHandlers";
+
 export const enum ReactiveFlags {
-  IS_REACTIVE = '__v_isReactive',
-  IS_READONLY = '__v_isReadonly'
-}
-/**
- * @description: reactive
- * @param {*} raw
- * @return {*}
- */
-export function reactive(raw) {
-  return createActiveObject(raw, mutableHanders)
-}
-/**
- * @description: readonly
- * @param {*} raw
- * @return {*}
- */
-export function readonly(raw) {
-  return createActiveObject(raw, readonlyHanders)
-}
-export function shallowReadonly(raw) {
-  return createActiveObject(raw, shallowReadonlyhandlers)
-}
-/**
- * @description: isReactive
- * @param {*} value
- * @return {*}
- */
-export function isReactive(value) {
-  return !!value[ReactiveFlags.IS_REACTIVE]
-}
-/**
- * @description: isReadonly
- * @param {*} value
- * @return {*}
- */
-export function isReadonly(value) {
-  return !!value[ReactiveFlags.IS_READONLY]
-}
-/**
- * @description: 判断是reactive和readonly
- * @param {*} value
- * @return {*}
- */
-export function isProxy(value) {
-  return isReactive(value) || isReadonly(value)
+  IS_REACTIVE = "__v_isReactive",
+  IS_READONLY = "__v_isReadonly",
 }
 
-/**
- * @description: createActiveObject
- * @param {*} target
- * @param {*} baseHandlers
- * @return {*}
- */
-function createActiveObject(target, baseHandlers) {
+export function reactive(raw) {
+  return createReactiveObject(raw, mutableHanders);
+}
+
+export function readonly(raw) {
+  return createReactiveObject(raw, readonlyHandlers);
+}
+
+export function shallowReadonly(raw) {
+  return createReactiveObject(raw, shallowReadonlyHandlers);
+}
+
+export function isReactive(value) {
+  return !!value[ReactiveFlags.IS_REACTIVE];
+}
+
+export function isReadonly(value) {
+  return !!value[ReactiveFlags.IS_READONLY];
+}
+
+export function isProxy(value) {
+  return isReactive(value) || isReadonly(value);
+}
+
+function createReactiveObject(target, baseHandles) {
   if (!isObject(target)) {
-    console.log(`target ${target} 必须是一个对象`)
+    console.warn(`target ${target} 必须是一个对象`);
+    return target
   }
-  return new Proxy(target, baseHandlers)
+
+  return new Proxy(target, baseHandles);
 }

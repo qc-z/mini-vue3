@@ -1,5 +1,5 @@
 import { hasChanged, isObject } from '../shared'
-import { isTracking, trackEffect, triggerEffects } from './effect'
+import { isTracking, trackEffects, triggerEffects } from './effect'
 import { reactive } from './reactive'
 
 class refImpl {
@@ -20,18 +20,18 @@ class refImpl {
   }
   set value(newValue) {
     // 值是一样的就不触发依赖
-    if (hasChanged(newValue, this._rawValue)) return
-    // 先去修改值再去触发依赖
-    this._value = convert(newValue)
-
-    this._rawValue = newValue
-    triggerEffects(this.dep)
+    if (hasChanged(newValue, this._rawValue)) {
+      // 先去修改值再去触发依赖
+      this._rawValue = newValue
+      this._value = convert(newValue)
+      triggerEffects(this.dep)
+    }
   }
 }
 function trackRefValue(ref) {
   //  依赖收集
   if (isTracking()) {
-    trackEffect(ref.dep)
+    trackEffects(ref.dep)
   }
 }
 function convert(value) {

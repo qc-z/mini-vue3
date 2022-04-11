@@ -84,19 +84,18 @@ export function track(target, key) {
     dep = new Set()
     depsMap.set(key, dep)
   }
-  trackEffect(dep)
+  trackEffects(dep)
 }
-export function trackEffect(dep) {
+export function trackEffects(dep) {
   // 优化
   if (dep.has(activeEffect)) return
   dep.add(activeEffect)
-
   // 反向收集dep
   activeEffect.deps.push(dep)
 }
 
 export function isTracking() {
-  return shouldTrack && activeEffect
+  return shouldTrack && activeEffect !== undefined
 }
 
 export function trigger(target, key) {

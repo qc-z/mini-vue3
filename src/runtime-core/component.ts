@@ -3,6 +3,7 @@ import { emit } from './componentEmit'
 import { PublicInstanceProxyHandlers } from './componentPubilcInstance'
 import { initProps } from './componentProps'
 import { initSlots } from './componentsSlots'
+import { proxyRefs } from '../reactivity'
 
 // 创建一个组件实例
 export function createComponentInstance(vnode, parent) {
@@ -14,6 +15,8 @@ export function createComponentInstance(vnode, parent) {
     slots: {},
     provides: parent ? parent.provides : {},
     parent,
+    isMounted: false,
+    subTree: {},
     emit: () => { }
   }
   component.emit = emit.bind(null, component) as any
@@ -52,7 +55,7 @@ function handlerSetupResult(instance, setupResult: any) {
   //  2 setupResult是object
   if (typeof setupResult === 'object') {
     // 挂载在实例上
-    instance.setupState = setupResult
+    instance.setupState = proxyRefs(setupResult)
   }
   finishComponentSetup(instance)
 }
